@@ -1,0 +1,24 @@
+# ninja log v6
+2	61	7705920604083354	CMakeFiles/stm32-task3.dir/GPIO/GPIO.c.obj	21cada0b8d3bced5
+7	84	7705919208471127	CMakeFiles/stm32-task3.dir/KEYPAD/Keypad.c.obj	b4f8795c847dcff1
+16	94	7705919208561126	CMakeFiles/stm32-task3.dir/Rcc/Rcc.c.obj	2618bff32a46d00a
+7	183	7705917580246941	CMakeFiles/stm32-task3.dir/EXTI/EXTI.c.obj	32d3acb7169ccdbb
+28	64	7705919748151439	CMakeFiles/stm32-task3.dir/STM32-base/startup/STM32F4xx/STM32F401xE.s.obj	2013c50947a1e625
+13	83	7705919208531138	CMakeFiles/stm32-task3.dir/Nvic/Nvic.c.obj	8c3d4c128968182e
+13	103	7705919748006664	CMakeFiles/stm32-task3.dir/STM32-base-STM32Cube/CMSIS/STM32F4xx/src/system_stm32f4xx.c.obj	fab5b1083f8d8677
+8	81	7705919747947443	CMakeFiles/stm32-task3.dir/SevenSegment/SevenSegments.c.obj	b5c8e7e640ae196b
+3	91	7706399705704703	CMakeFiles/stm32-task3.dir/src/main.c.obj	4a2b76741822c7ee
+88	225	7706395740435100	stm32-task3.elf	fdb906d53c30c14c
+3	88	7706395739586007	CMakeFiles/stm32-task3.dir/LCD/LCD.c.obj	d8f551971c34f2b5
+4	72	7705919747906663	CMakeFiles/stm32-task3.dir/SPI/SPI_Driver.c.obj	58051abdd3c746
+3	80	7706399823843650	build.ninja	813b1b064ef68fbe
+3	83	7706400219727971	CMakeFiles/stm32-task3.dir/src/main.c.obj	4a2b76741822c7ee
+3	85	7706400845130002	CMakeFiles/stm32-task3.dir/src/main.c.obj	4a2b76741822c7ee
+3	105	7706402688862961	CMakeFiles/stm32-task3.dir/src/main.c.obj	4a2b76741822c7ee
+105	254	7706402689881688	stm32-task3.elf	fdb906d53c30c14c
+2	77	7706403251304499	CMakeFiles/stm32-task3.dir/src/main.c.obj	4a2b76741822c7ee
+77	237	7706403252044465	stm32-task3.elf	fdb906d53c30c14c
+3	75	7706403644601637	CMakeFiles/stm32-task3.dir/src/main.c.obj	4a2b76741822c7ee
+75	226	7706403645320712	stm32-task3.elf	fdb906d53c30c14c
+2	76	7706403857709581	CMakeFiles/stm32-task3.dir/src/main.c.obj	4a2b76741822c7ee
+76	206	7706403858444798	stm32-task3.elf	fdb906d53c30c14c

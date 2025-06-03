@@ -1,0 +1,3 @@
+D:/SBME/3rd Year/Embedded/Project/Smart-Conveyor-Monitoring/cmake-build-debug/CMakeFiles/stm32-task3.dir
+D:/SBME/3rd Year/Embedded/Project/Smart-Conveyor-Monitoring/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/SBME/3rd Year/Embedded/Project/Smart-Conveyor-Monitoring/cmake-build-debug/CMakeFiles/rebuild_cache.dir

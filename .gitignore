@@ -50,3 +50,8 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+
+#STM 
+STM32-base
+STM32-base-STM32Cube
