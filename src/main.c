@@ -1,5 +1,8 @@
-#include "GPIO.h"
-#include "LCD.h"
+#include "../RCC/Rcc.h"
+#include "../GPIO/GPIO.h"
+#include "../LCD/LCD.h"
+#include "../ADC/ADC_interface.h"
+#include "../ADC/ADC_private.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -9,6 +12,11 @@ int main(void) {
     RCC_AHB1ENR |= (1 << 0);  // Enable clock for GPIOA
     RCC_AHB1ENR |= (1 << 1);  // Enable clock for GPIOA
     RCC_AHB1ENR |= (1 << 2);  // Enable clock for GPIOA
+    Rcc_Enable(RCC_GPIOA);
+    Rcc_Enable(RCC_ADC1);
+
+    // initialize ADC channel 1
+    ADC_Init(GPIOA, 1);
 
     uint16 motor_speed = 75;       // Example value
     uint16 conveyor_speed = 120;   // Example value
@@ -50,8 +58,14 @@ int main(void) {
     LCD_SendString(line2);
 
     while (1) {
+    	uint16 pot_value = ADC_Conversion();
 
-
+    	/// for testing pot value
+//    	itoa(pot_value, motor_str, 10);
+//    	strcpy(line1, "M:");
+//    	strcat(line1, motor_str);
+//    	LCD_SendCommand(0x01);       // Clear display
+//    	LCD_SendString(line1);       // First line
     }
 
     return 0;

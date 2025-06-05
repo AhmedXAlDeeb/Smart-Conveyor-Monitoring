@@ -1,15 +1,15 @@
-/**
- * Rcc.c
+/*
+ * RCC.c
  *
- *  Created on: Sun Mar 26 2023
- *  Author    : Abdullah Darwish
+ *  Created on: May 1, 2025
+ *      Author: Hassnaa Hossam
  */
 
 #include "Rcc.h"
 
-#include "Bit_Operations.h"
+#include "../Lib/Bit_Operations.h"
+#include "../Lib/Std_Types.h"
 #include "Rcc_Private.h"
-#include "Std_Types.h"
 
 void Rcc_Init(void) {
     SET_BIT(RCC_CR, 0);
@@ -58,4 +58,11 @@ void Rcc_Disable(uint8 PeripheralId) {
             break;
     }
 }
+
+
+
+
+
+
+
 
