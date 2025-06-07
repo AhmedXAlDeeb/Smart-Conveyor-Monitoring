@@ -7,6 +7,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define pot_pin  		1
+#define IR_button_pin  	1
+
 int main(void) {
     // 1. Enable the GPIOA clock (assuming LCD is connected to GPIOA)
     RCC_AHB1ENR |= (1 << 0);  // Enable clock for GPIOA
@@ -15,12 +18,17 @@ int main(void) {
     Rcc_Enable(RCC_GPIOA);
     Rcc_Enable(RCC_ADC1);
 
-    // initialize ADC channel 1
-    ADC_Init(GPIOA, 1);
+    // Initialize ADC channel 1
+    ADC_Init(GPIOA, pot_pin);
+
+    // Initialize GPIO button PB1 simulating IR sensor for object detection
+    GPIO_INIT(GPIOB, IR_button_pin, INPUT_MODE, PULL_UP);
+    uint32 object_count = 0;
+    uint16 previous_ir_state = 1;
+
 
     uint16 motor_speed = 75;       // Example value
     uint16 conveyor_speed = 120;   // Example value
-    uint32 object_count = 5;       // Example value
     uint8 emergency_flag = 0;      // 0: normal, 1: emergency
     // 2. Initialize the LCD
     LCD_Init();
@@ -59,6 +67,19 @@ int main(void) {
 
     while (1) {
     	uint16 pot_value = ADC_Conversion();
+
+    	// Object Detection polling on falling edge
+    	uint16 curr_ir_state = GPIO_ReadPin(GPIOB, IR_button_pin);
+    	if(previous_ir_state == 1 && curr_ir_state == 0){
+    		object_count += 1;
+    		// Display count on LCD
+			itoa(object_count, obj_str, 10);
+			strcpy(line2, "Obj:");
+			strcat(line2, obj_str);
+			LCD_SendCommand(0x01);       // Clear display
+			LCD_SendString(line2);       // Second line
+    	}
+    	previous_ir_state = curr_ir_state;  // update previous value
 
     	/// for testing pot value
 //    	itoa(pot_value, motor_str, 10);
