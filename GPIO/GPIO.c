@@ -18,7 +18,7 @@ const GPIO_Port gpio_ports[] = {
 
 
 // Get GPIO Port
-GPIO_RegDef *GetGpioPort(uint8 PortName) {
+const GPIO_RegDef *GetGpioPort(uint8 PortName) {
 
     for (uint8 i = 0; i < sizeof(gpio_ports)/sizeof(gpio_ports[0]); i++) {
         if (gpio_ports[i].PortName == PortName) {
@@ -33,7 +33,7 @@ GPIO_RegDef *GetGpioPort(uint8 PortName) {
 
 void GPIO_INIT(uint8 PortName, uint8 PinNumber, uint8 PinMode, uint8 DefaultState)
 {
-    GPIO_RegDef *port = GetGpioPort(PortName);
+    const GPIO_RegDef *port = GetGpioPort(PortName);
     if (!port) return;
 
     // MODER Configuration
@@ -59,15 +59,15 @@ void GPIO_INIT(uint8 PortName, uint8 PinNumber, uint8 PinMode, uint8 DefaultStat
 void GPIO_WritePin(uint8 PortName, uint8 PinNumber, uint8 Data)
 {
     /* Get the GPIO port structure pointer */
-    GPIO_RegDef *port = GetGpioPort(PortName);
+    const GPIO_RegDef *port = GetGpioPort(PortName);
 
     /* Clear-then-set sequence (as requested) */
-    *port->ODR &= ~(0b1 << PinNumber);      // 1. First clear the bit
+    *port->ODR &= ~(0x01 << PinNumber);      // 1. First clear the bit
     *port->ODR |= (Data << PinNumber); // 2. Then set new value
 
 }
 uint8 GPIO_ReadPin(uint8 PortName, uint8 PinNumber) {
-    GPIO_RegDef *port = GetGpioPort(PortName);
+    const GPIO_RegDef *port = GetGpioPort(PortName);
     return (*port->IDR >> PinNumber) & 0x1;
 }
 

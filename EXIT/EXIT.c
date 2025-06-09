@@ -13,7 +13,7 @@
 
 
 void EXTI_Init( uint8 pin ,uint8 Port , uint8 trigger) {
-    uint8_t reg_index = pin / 4;
+    uint8 reg_index = pin / 4;
     SYSCFG->EXTICR[reg_index] &=~(0x0f<<((pin % 4)*4));
 
     if (Port == GPIOA) {
@@ -55,13 +55,13 @@ void EXTI_Init( uint8 pin ,uint8 Port , uint8 trigger) {
 
 void EXTI_Enable(uint8 pin) {
     EXTI->IMR |= (0x01<<pin);
-    uint8_t irq_num = EXTI_GetIRQn(pin);
+    uint8 irq_num = EXTI_GetIRQn(pin);
     NVIC->NVIC_ISER[irq_num / 32] |= (0x01 << (irq_num % 32));
 }
 
 void EXTI_Disable(uint8 pin) {
     EXTI->IMR &= ~(1 << pin);
-    uint8_t irq_num = EXTI_GetIRQn(pin);
+    uint8 irq_num = EXTI_GetIRQn(pin);
     NVIC->NVIC_ICER[irq_num / 32] |= (1 << (irq_num % 32));
 }
 

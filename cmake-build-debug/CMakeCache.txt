@@ -209,6 +209,15 @@ CMAKE_TAPI:FILEPATH=CMAKE_TAPI-NOTFOUND
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
+//Value Computed by CMake
+Smart-Conveyor-Monitoring_BINARY_DIR:STATIC=D:/SBME/3rd Year/Embedded/Project/Smart-Conveyor-Monitoring/cmake-build-debug
+
+//Value Computed by CMake
+Smart-Conveyor-Monitoring_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+Smart-Conveyor-Monitoring_SOURCE_DIR:STATIC=D:/SBME/3rd Year/Embedded/Project/Smart-Conveyor-Monitoring
+
 //Enable HAL
 USE_HAL:BOOL=OFF
 

@@ -39,5 +39,6 @@ void LCD_Init(void);
 void LCD_SendCommand(uint8 cmd);
 void LCD_SendChar(uint8 data);
 void LCD_SendString(const char* str);
+void LCD_UpdateLine(uint8 row, const char *new_line);
 
 #endif // LCD_H

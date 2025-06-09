@@ -9,6 +9,10 @@ set(INCLUDE_LIST ${INCLUDE_LIST}
         ${PROJECT_PATH}/KEYPAD
         ${PROJECT_PATH}/SevenSegment
         ${PROJECT_PATH}/LCD
+        ${PROJECT_PATH}/PWM
+        ${PROJECT_PATH}/Delay
+
+
 
 
 
