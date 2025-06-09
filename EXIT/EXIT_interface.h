@@ -1,7 +1,8 @@
 //
 // Created by EMAN on 6/6/2025.
 //
-
+//
+#include "EXIT_private.h"
 #include "../LIB/Std_Types.h"
 #ifndef EXTI_H
 #define EXTI_H
@@ -13,23 +14,22 @@
 #define interrupt_portE_code  0x4
 
 #define non_maskable 1
-
 #define  RISING_TRIGGER   				0
 #define  FALLING_TRIGGER  				1
 #define  RISING_AND_FALLING_TRIGGER  	2
 
 typedef struct {
-    uint32 EMR;
-    uint32 RTSR;
-    uint32 FTSR;
-    uint32 SWIER;
-    uint32 PR;
-}ExtiType;
+    volatile uint32 IMR;
+    volatile uint32 EMR;
+    volatile uint32 RTSR;
+    volatile uint32 FTSR;
+    volatile uint32 SWIER;
+    volatile uint32 PR;
+} ExtiType;
 
 typedef struct {
     uint32 NVIC_ISER[8];
     uint32  NVIC_ICER[8];
-
 }NVICType;
 
 void EXTI_Init(uint8 pin , uint8 Port , uint8 trigger);
@@ -38,5 +38,3 @@ void EXTI_Disable(uint8 pin);
 uint8 EXTI_GetIRQn(uint8 pin);
 
 #endif
-
-
