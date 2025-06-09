@@ -2,15 +2,12 @@
 // Created by EMAN on 6/6/2025.
 //
 #include "EXIT_interface.h"
-
 #include <../LIB/Std_Types.h>
 #include "../GPIO/GPIO.h"
-
+#include <stdint.h>
 #include "../GPIO/GPIO_Private.h"
-#include "STM32F4xx.h"
+#include "SYSCFG_Private.h"
 #define NVIC     ((volatile NVICType*) (0xE000E100))
-
-
 
 void EXTI_Init( uint8 pin ,uint8 Port , uint8 trigger) {
     uint8_t reg_index = pin / 4;
@@ -26,20 +23,6 @@ void EXTI_Init( uint8 pin ,uint8 Port , uint8 trigger) {
     else {
         SYSCFG->EXTICR[reg_index] |=(interrupt_portD_code<<((pin % 4)*4));
     }
-    // switch (Port){
-    //     case GPIOA:
-    //         SYSCFG->EXTICR[reg_index] |=(interrupt_portA_code<<((pin % 4)*4));
-    //     break;
-    //     case GPIOB:
-    //         SYSCFG->EXTICR[reg_index] |=(interrupt_portB_code<<((pin % 4)*4));
-    //     break;
-    //     case GPIOC:
-    //         SYSCFG->EXTICR[reg_index] |=(interrupt_portC_code<<((pin % 4)*4));
-    //     break;
-    //     case GPIOD:
-    //         SYSCFG->EXTICR[reg_index] |=(interrupt_portD_code<<((pin % 4)*4));
-    //     break;
-    // }
     EXTI->RTSR &= ~(1 << pin);
     EXTI->FTSR &= ~(1 << pin);
     if (trigger==RISING_TRIGGER) {
@@ -50,7 +33,6 @@ void EXTI_Init( uint8 pin ,uint8 Port , uint8 trigger) {
         EXTI->RTSR |= (0x1 << pin);
         EXTI->FTSR |= (0x1 << pin);
     }
-
 }
 
 void EXTI_Enable(uint8 pin) {
@@ -64,7 +46,6 @@ void EXTI_Disable(uint8 pin) {
     uint8_t irq_num = EXTI_GetIRQn(pin);
     NVIC->NVIC_ICER[irq_num / 32] |= (1 << (irq_num % 32));
 }
-
 
 uint8 EXTI_GetIRQn(uint8 pin) {
     if (pin <= 4)
