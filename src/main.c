@@ -16,9 +16,11 @@
 #define IR_button_pin  	1
 #define emergency_pin   4
 #define emergency_LED   3
+#define RESET_BUTTON	5
 
 uint8 emergency_flag = 0;      // 0: normal, 1: emergency
 void emergency_func(void);
+void reset_func(void);
 
 int main(void) {
     // 1. Enable the GPIOA clock (assuming LCD is connected to GPIOA)
@@ -36,14 +38,17 @@ int main(void) {
 	// 2. Initialize the LCD
     LCD_Init();
 
-    // Initialize interrupt pin
+    // Emergency LED
     GPIO_INIT(GPIOA, emergency_LED, OUTPUT_MODE, PUSH_PULL);
+    // Initialize interrupt pin Emergency button
     GPIO_INIT(GPIOA, emergency_pin, INPUT_MODE, PULL_UP);
-    GPIO_INIT(GPIOA, 8, OUTPUT_MODE, PUSH_PULL);
-//    EXTI_Init(emergency_pin, GPIOA, RISING_TRIGGER);
-    //    EXTI_Enable(emergency_pin);
     Exti_Init(EXTI_LINE_4, EXTI_PORT_A, EXTI_EDGE_RISING, emergency_func);
     Exti_Enable(EXTI_LINE_4);
+
+    // Initialize reset button
+    GPIO_INIT(GPIOA, RESET_BUTTON, INPUT_MODE, PULL_UP);
+    Exti_Init(EXTI_LINE_5, EXTI_PORT_A, EXTI_EDGE_RISING, reset_func);
+    Exti_Enable(EXTI_LINE_5);
 
 	// Initialize GPIO button PB1 simulating IR sensor for object detection
 	GPIO_INIT(GPIOB, IR_button_pin, INPUT_MODE, PULL_UP);
@@ -71,7 +76,6 @@ int main(void) {
 	uint32 object_count = 0;
 	uint16 previous_ir_state = 1;
     while (1) {
-//    	EXTI_Disable(emergency_pin);
         uint16 pot_value = ADC_Conversion();  // Range 0–4095
 
         // Calculate motor speed
@@ -86,7 +90,7 @@ int main(void) {
 			object_count += 1;
 		}
 		previous_ir_state = curr_ir_state;  // update previous value
-//		EXTI_Enable(emergency_pin);
+
 		if (emergency_flag == 0){
 			itoa(motor_speed, motor_str, 10);
 			itoa(pot_value, conv_str, 10);
@@ -105,11 +109,11 @@ int main(void) {
 			LCD_UpdateLine(0, line1);  // Update row 0 with line1
 			LCD_UpdateLine(1, line2);  // Update row 1 with line2
 		}else if(emergency_flag == 1){
+			PWM_SetDutyCycle(0); // stop motor
 			strcpy(line1, "EMERGENCY STOP");
 			strcpy(line2, "");
 		    LCD_UpdateLine(0, line1);  // Update row 0 with line1
 		    LCD_UpdateLine(1, line2);  // Update row 1 with line2
-
 		}
 //        delay_ms(50);  // Small delay
 
@@ -122,5 +126,12 @@ void emergency_func(void) {
     __disable_irq();
 	emergency_flag = 1;
 	GPIO_WritePin(GPIOA, emergency_LED, 1);
+    __enable_irq();
+}
+
+void reset_func(void) {
+    __disable_irq();
+	emergency_flag = 0;
+	GPIO_WritePin(GPIOA, emergency_LED, 0);
     __enable_irq();
 }
