@@ -2,10 +2,11 @@
 #include "../GPIO/GPIO.h"
 #include "../LCD/LCD.h"
 #include "../ADC/ADC_interface.h"
-#include "../ADC/ADC_private.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "../PWM/PWM.h"
+#include "../Delay/Delay.h"
 
 #define pot_pin  		1
 #define IR_button_pin  	1
@@ -18,26 +19,26 @@ int main(void) {
     Rcc_Enable(RCC_GPIOA);
     Rcc_Enable(RCC_ADC1);
 
-    // Initialize ADC channel 1
+    // initialize ADC channel 1
     ADC_Init(GPIOA, pot_pin);
 
-    // Initialize GPIO button PB1 simulating IR sensor for object detection
-    GPIO_INIT(GPIOB, IR_button_pin, INPUT_MODE, PULL_UP);
-    uint32 object_count = 0;
-    uint16 previous_ir_state = 1;
-
-
-    uint16 motor_speed = 75;       // Example value
-    uint16 conveyor_speed = 120;   // Example value
-    uint8 emergency_flag = 0;      // 0: normal, 1: emergency
-    // 2. Initialize the LCD
+	// 2. Initialize the LCD
     LCD_Init();
 
-    // 3. Send a message to the LCD
+	// Initialize GPIO button PB1 simulating IR sensor for object detection
+	GPIO_INIT(GPIOB, IR_button_pin, INPUT_MODE, PULL_UP);
 
-    // // 4. Optionally move to second line and print more
-    // LCD_SendCommand(0xC0);  // Move to line 2 (0x80 + 0x40)
-    // LCD_SendString("LCD Driver!");
+	// Initialize PWM pin PA9 = TIM1_CH2
+    PWM_Init(2);
+    PWM_Start();
+    // Set PB0 and PB1 as output push-pull
+    GPIO_INIT('B', 2, OUTPUT_MODE, PUSH_PULL);  // PB0
+    GPIO_INIT('B', 3, OUTPUT_MODE, PUSH_PULL);  // PB1
+
+    // Optional: Set initial value
+    GPIO_WritePin('B', 2, 1);  // Set PB0 HIGH
+    GPIO_WritePin('B', 3, 0);  // Set PB1 LOW
+
 
     char line1[17] = {0};
     char line2[17] = {0};
@@ -46,47 +47,47 @@ int main(void) {
     char conv_str[8];
     char obj_str[6];
 
-    itoa(motor_speed, motor_str, 10);
-    itoa(conveyor_speed, conv_str, 10);
-    itoa(object_count, obj_str, 10);
-
-    // line1 = "M:<motor>% C:<conveyor>"
-    strcpy(line1, "M:");
-    strcat(line1, motor_str);
-    strcat(line1, "% C:");
-    strcat(line1, conv_str);
-
-    // line2 = "Obj:<object_count>"
-    strcpy(line2, "Obj:");
-    strcat(line2, obj_str);
-
-    LCD_SendCommand(0x01);       // Clear display
-    LCD_SendString(line1);       // First line
-    LCD_SendCommand(0xC0);       // Move to second line
-    LCD_SendString(line2);
+    uint16 motor_speed = 0;
+    uint16 conveyor_speed = 0;
+    uint8 emergency_flag = 0;      // 0: normal, 1: emergency
+	uint32 object_count = 0;
+	uint16 previous_ir_state = 1;
 
     while (1) {
-    	uint16 pot_value = ADC_Conversion();
+        uint16 pot_value = ADC_Conversion();  // Range 0–4095
 
-    	// Object Detection polling on falling edge
-    	uint16 curr_ir_state = GPIO_ReadPin(GPIOB, IR_button_pin);
-    	if(previous_ir_state == 1 && curr_ir_state == 0){
-    		object_count += 1;
-    		// Display count on LCD
-			itoa(object_count, obj_str, 10);
-			strcpy(line2, "Obj:");
-			strcat(line2, obj_str);
-			LCD_SendCommand(0x01);       // Clear display
-			LCD_SendString(line2);       // Second line
-    	}
-    	previous_ir_state = curr_ir_state;  // update previous value
+        // Calculate motor speed
+        uint32 motor_speed = ((uint32)pot_value * 100U) / 4095U;
 
-    	/// for testing pot value
-//    	itoa(pot_value, motor_str, 10);
-//    	strcpy(line1, "M:");
-//    	strcat(line1, motor_str);
-//    	LCD_SendCommand(0x01);       // Clear display
-//    	LCD_SendString(line1);       // First line
+        // Set PWM
+        PWM_SetDutyCycle((uint16)motor_speed);
+
+		// Object Detection polling on falling edge
+		uint16 curr_ir_state = GPIO_ReadPin(GPIOB, IR_button_pin);
+		if(previous_ir_state == 1 && curr_ir_state == 0){
+			object_count += 1;
+		}
+		previous_ir_state = curr_ir_state;  // update previous value
+
+
+	    itoa(motor_speed, motor_str, 10);
+	    itoa(pot_value, conv_str, 10);
+	    itoa(object_count, obj_str, 10);
+
+	    // line1 = "M:<motor>% C:<conveyor>"
+	    strcpy(line1, "M:");
+	    strcat(line1, motor_str);
+	    strcat(line1, "% C:");
+	    strcat(line1, conv_str);
+
+	    // line2 = "Obj:<object_count>"
+	    strcpy(line2, "Obj:");
+	    strcat(line2, obj_str);
+
+	    LCD_UpdateLine(0, line1);  // Update row 0 with line1
+	    LCD_UpdateLine(1, line2);  // Update row 1 with line2
+
+        delay_ms(50);  // Small delay
     }
 
     return 0;
