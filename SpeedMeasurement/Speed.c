@@ -2,52 +2,87 @@
 // Created by Mohamed Yasser on 6/6/2025.
 //
 
+#include "../GPIO/GPIO.h"
 #include "Speed.h"
-#include "stm32f4xx.h"
+#include "Bit_Operations.h"
+#include "Utils.h"
+#include "Rcc.h"
+#include "GPIO.h"
+#include "Std_Types.h"
+#include "Rcc.h"
+#
+// #include "stm32f407xx.h"  // For register definitions
+
+/* State variables */
+static uint32 capture1 = 0;
+static uint32 capture2 = 0;
+static uint8 captureState = 0;
+static uint32 lastMeasuredPeriod = 0;
+/* Using TIM3 */
+TIMER_RegDef tim3 = TIMER_INIT(TIM3_BASE_ADDR);
 
 void SpeedMeasurement_Init(void) {
-  RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
-  RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+    Rcc_Enable(RCC_TIM3);
 
-  // PA0 -> TIM2_CH1
-  GPIOA->MODER &= ~(3 << (0 * 2));
-  GPIOA->MODER |=  (2 << (0 * 2));     // Alternate function
-  GPIOA->AFR[0] &= ~(0xF << (0 * 4));
-  GPIOA->AFR[0] |=  (1 << (0 * 4));    // AF1 = TIM2_CH1
+    // Configure PA6 as AF2 for TIM3_CH1
+    GPIO_INIT(0, 6, ALT_MODE, 2);  // Port A, Pin 6, AF2
 
-  TIM2->PSC = 84 - 1;                  // Prescaler → 1MHz tick
-  TIM2->CCMR1 = 0x01;                  // CC1 channel is input, mapped to TI1
-  TIM2->CCER &= ~(1 << 1);             // Rising edge
-  TIM2->CCER |= 1;                     // Enable capture
-  TIM2->CR1 |= 1;                      // Enable counter
+    // Set prescaler (optional, use if needed)
+    *tim3.PSC = 249;  // Divides 16 MHz to 1 MHz
+
+    // Set auto-reload register to max (optional)
+    *tim3.ARR = 0xFFFF;
+
+    // Configure input capture mode on CH1 (TI1)
+    *tim3.CCMR1 &= ~(0xFF);        // Clear CC1S and IC1F
+    *tim3.CCMR1 |= 0x01;           // CC1S = 01: IC1 is mapped to TI1
+
+    // Enable capture on rising edge
+    *tim3.CCER &= ~(1 << 1);       // CC1P = 0 (rising edge)
+    *tim3.CCER |= (1 << 0);        // CC1E = 1 (enable)
+
+    // Enable interrupt on capture
+    *tim3.DIER |= (1 << 1);        // CC1IE
+
+    // Enable the counter
+    *tim3.CR1 |= (1 << 0);         // CEN
 }
 
+uint8 SpeedMeasurement_GetPeriod(uint32* period) {
+    if (*tim3.SR & (1 << 9)) {  // Check CC1OF (overcapture)
+        *tim3.SR &= ~(1 << 9);
+        captureState = 0;
+        return 0;  // Overflow: invalid reading
+    }
 
-float Get_SignalFrequency(void) {
-  TIM2->CNT = 0;
-  TIM2->SR &= ~TIM_SR_CC1IF;  // Clear flag
+    if (*tim3.SR & (1 << 1)) {  // Check CC1IF
+        *tim3.SR &= ~(1 << 1);  // Clear interrupt flag
 
-  int timeout = 1000000;  // Adjust as needed
+        if (captureState == 0) {
+            capture1 = *tim3.CCR1;
+            captureState = 1;
+            return 0;
+        } else {
+            capture2 = *tim3.CCR1;
 
-  // Wait for 1st edge
-  while (!(TIM2->SR & TIM_SR_CC1IF) && timeout--);
-  if (timeout <= 0) return 0;
+            if (capture2 >= capture1) {
+                lastMeasuredPeriod = capture2 - capture1;
+            } else {
+                lastMeasuredPeriod = (0xFFFF - capture1) + capture2 + 1;
+            }
 
-  uint32_t t1 = TIM2->CCR1;
-  TIM2->SR &= ~TIM_SR_CC1IF;
+            *period = lastMeasuredPeriod;
+            captureState = 0;
+            return 1;
+        }
+    }
 
-  timeout = 1000000; // Reset timeout
-  while (!(TIM2->SR & TIM_SR_CC1IF) && timeout--);
-  if (timeout <= 0) return 0;
+    return 0;
+}
 
-  uint32_t t2 = TIM2->CCR1;
-  TIM2->SR &= ~TIM_SR_CC1IF;
-
-  if (t2 > t1) {
-    uint32_t delta = t2 - t1;
-    float period_sec = delta / 1000000.0f;  // 1 MHz timer
-    return 1.0f / period_sec;  // Frequency = 1 / period
-  }
-
-  return 0;
+float SpeedMeasurement_GetFrequency(uint32 timerClockFreq) {
+    if (lastMeasuredPeriod == 0) {
+        return 0.0f;
+    }
+    return ((float)timerClockFreq / lastMeasuredPeriod);
 }

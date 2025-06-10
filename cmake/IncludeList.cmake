@@ -11,6 +11,8 @@ set(INCLUDE_LIST ${INCLUDE_LIST}
         ${PROJECT_PATH}/LCD
         ${PROJECT_PATH}/PWM
         ${PROJECT_PATH}/Delay
+        ${PROJECT_PATH}/SpeedMeasurement
+
 
 
 

@@ -28,7 +28,7 @@ add_executable(${EXECUTABLE} ${SOURCE_LIST} ${STARTUP_BASE_DIR}/${SERIES_FOLDER}
         LCD/LCD.h
         LCD/LCD.c
         src/main.c
-        src/speed_main.c)
+        )
 # Include
 target_include_directories(${EXECUTABLE} PUBLIC ${INCLUDE_LIST})
 # Project symbols
