@@ -31,17 +31,19 @@ void ADC_Init(uint8 port, uint8 channel){
 	ADC1->CR2 &= ~(0x1 << 11);
 	ADC1->CR2 |=  (ADC_DATA_ALIGNMENT << 11);
 
-	//  Bit 1 CONT: Continuous conversion
-	ADC1->CR2 |= (0x1 << 1);
+	//  Bit 1 CONT: Continuous conversion Bit
+	ADC1->CR2 &= ~(0x1 << 1);
+	ADC1->CR2 |= (ADC_SINGLE_CONT << 1);
 
 	// Bit 10 EOCS: End of conversion selection
-	ADC1->CR2 |= (0x1 << 10);
+	ADC1->CR2 |= (0x1 << 10); // EOC is set at the end of each individual conversion.
 
-	// sampling rate
-	if (channel <= 9){
+	// sampling rate: SAMPLING_RATE * ADC Clock
+	// The ADC will spend "SAMPLING_RATE value" ADC clock cycles sampling the input signal before starting the conversion.
+	if (channel <= 9){ // Channels 0–9: configured in SMPR2
 		ADC1->SMPR2 &= ~(0x7 << (channel * 3));
 		ADC1->SMPR2 |= (SAMPLING_RATE << (channel * 3));
-	} else{
+	} else{ // Channels 10–18: configured in SMPR1
 		ADC1->SMPR1 &= ~(0x7 << ((channel - 10) * 3));
 		ADC1->SMPR1 |= (SAMPLING_RATE << ((channel - 10) * 3));
 	}
@@ -55,7 +57,7 @@ void ADC_Init(uint8 port, uint8 channel){
 	ADC1->SQR1 |=  ((NUM_CHANNELS - 1) << 20);
 
 	// Set channel in SQ1
-	ADC1->SQR3 &= ~(0x1F << 0);
+	ADC1->SQR3 &= ~(0x1F << 0); // 0 for first sequence
 	ADC1->SQR3 |=  (channel  << 0);
 
 	// Enable ADC by set ADON bit in ADC_CR2 (bit: 0)
@@ -63,9 +65,10 @@ void ADC_Init(uint8 port, uint8 channel){
 }
 
 uint16 ADC_Conversion() {
+	// Bit 30 SWSTART in CR2: Start conversion of regular channels
     ADC1->CR2 |= (1 << 30);
 
-	while (!((ADC1->SR >> 1) & 0x1));  // Wait for EOC
+	while (!((ADC1->SR >> 1) & 0x1));  // Wait for EOC flag
 
     // Read data from DR
     return ADC1->DR;

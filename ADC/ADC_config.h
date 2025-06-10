@@ -38,6 +38,14 @@
 
 
 /***************************************
+ * Continuous or Single Conversion mode
+ * 1: Continuous Mode
+ * 0: Single  Mode
+ ***************************************/
+#define ADC_SINGLE_CONT        	0
+
+
+/***************************************
  * ADC Sampling Rate Options
  * ADC_3_CYCLES
  * ADC_15_CYCLES
