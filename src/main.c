@@ -73,7 +73,6 @@ int main(void) {
     char conv_str[8];
     char obj_str[6];
 
-    uint16 conveyor_speed = 0;
 uint32 object_count = 0;
 uint16 previous_ir_state = 1;
 
@@ -83,6 +82,9 @@ const float wheelDiameter_cm = 6.0f;
 const float wheelCircum_cm = 3.1416f * wheelDiameter_cm;
 
 	while (1) {
+		uint16 conveyor_speed = 0;
+		uint32 period = 0;
+
 		uint16 pot_value = ADC_Conversion();  // Range 0–4095
 
 		// Calculate motor speed
@@ -98,23 +100,28 @@ const float wheelCircum_cm = 3.1416f * wheelDiameter_cm;
 		}
 		previous_ir_state = curr_ir_state;  // update previous state
 
+		if (SpeedMeasurement_GetPeriod(&period)) {
+			float freq = SpeedMeasurement_GetFrequency(timerClockFreq);
+			// float rpm = (freq * 60.0f) / pulsesPerRev;
+			// float speed_cm_min = rpm * wheelCircum_cm;
+
+			conveyor_speed = (uint16)freq;
+		}
+
 		if (emergency_flag == 0) {
 
 			// 4. Read conveyor speed from input capture
-			uint32 period = 0;
-			uint16 conveyor_speed = 0;  // Default value
+			// uint16 conveyor_speed = 0;  // Default value
 
-			if (SpeedMeasurement_GetPeriod(&period)) {
-				float freq = SpeedMeasurement_GetFrequency(timerClockFreq);
-				float rpm = (freq * 60.0f) / pulsesPerRev;
-				float speed_cm_min = rpm * wheelCircum_cm;
-
-				conveyor_speed = (uint16)speed_cm_min;
-			}
 
 			// Update display strings
 			itoa(motor_speed, motor_str, 10);
-			itoa(conveyor_speed, conv_str, 10);
+			if (conveyor_speed == 0) {
+				itoa("None", conv_str, 10);
+			} else {
+				itoa(conveyor_speed, conv_str, 10);
+
+			}
 			itoa(object_count, obj_str, 10);
 
 			strcpy(line1, "M:");

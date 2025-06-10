@@ -121,14 +121,6 @@ build CMakeFiles/stm32-task3.dir/SevenSegment/SevenSegments.c.obj: C_COMPILER__s
   OBJECT_DIR = CMakeFiles\stm32-task3.dir
   OBJECT_FILE_DIR = CMakeFiles\stm32-task3.dir\SevenSegment
 
-build CMakeFiles/stm32-task3.dir/Speed.c.obj: C_COMPILER__stm32-task3_unscanned_Debug D$:/SBME/3rd$ Year/Embedded/Project/Smart-Conveyor-Monitoring/Speed.c || cmake_object_order_depends_target_stm32-task3
-  DEFINES = -DCALL_ARM_SYSTEM_INIT -DHSE_VALUE=8000000 -DNDEBUG -DSTM32F401xE
-  DEP_FILE = CMakeFiles\stm32-task3.dir\Speed.c.obj.d
-  FLAGS = -g -std=gnu11 -fdiagnostics-color=always -mthumb -mcpu=cortex-m4 -mfloat-abi=soft -O0 -Wall -Wextra -g -gdwarf-2 -Wpedantic -Wno-unused-parameter
-  INCLUDES = -I"D:/SBME/3rd Year/Embedded/Project/Smart-Conveyor-Monitoring/STM32-base/startup" -I"D:/SBME/3rd Year/Embedded/Project/Smart-Conveyor-Monitoring/STM32-base-STM32Cube/CMSIS/ARM/inc" -I"D:/SBME/3rd Year/Embedded/Project/Smart-Conveyor-Monitoring/STM32-base-STM32Cube/CMSIS/STM32F4xx/inc" -I"D:/SBME/3rd Year/Embedded/Project/Smart-Conveyor-Monitoring/include" -I"D:/SBME/3rd Year/Embedded/Project/Smart-Conveyor-Monitoring/Lib" -I"D:/SBME/3rd Year/Embedded/Project/Smart-Conveyor-Monitoring/Rcc" -I"D:/SBME/3rd Year/Embedded/Project/Smart-Conveyor-Monitoring/GPIO" -I"D:/SBME/3rd Year/Embedded/Project/Smart-Conveyor-Monitoring/KEYPAD" -I"D:/SBME/3rd Year/Embedded/Project/Smart-Conveyor-Monitoring/SevenSegment" -I"D:/SBME/3rd Year/Embedded/Project/Smart-Conveyor-Monitoring/LCD" -I"D:/SBME/3rd Year/Embedded/Project/Smart-Conveyor-Monitoring/PWM" -I"D:/SBME/3rd Year/Embedded/Project/Smart-Conveyor-Monitoring/Delay" -I"D:/SBME/3rd Year/Embedded/Project/Smart-Conveyor-Monitoring/SpeedMeasurement"
-  OBJECT_DIR = CMakeFiles\stm32-task3.dir
-  OBJECT_FILE_DIR = CMakeFiles\stm32-task3.dir
-
 build CMakeFiles/stm32-task3.dir/SpeedMeasurement/Speed.c.obj: C_COMPILER__stm32-task3_unscanned_Debug D$:/SBME/3rd$ Year/Embedded/Project/Smart-Conveyor-Monitoring/SpeedMeasurement/Speed.c || cmake_object_order_depends_target_stm32-task3
   DEFINES = -DCALL_ARM_SYSTEM_INIT -DHSE_VALUE=8000000 -DNDEBUG -DSTM32F401xE
   DEP_FILE = CMakeFiles\stm32-task3.dir\SpeedMeasurement\Speed.c.obj.d
@@ -169,7 +161,7 @@ build CMakeFiles/stm32-task3.dir/STM32-base/startup/STM32F4xx/STM32F401xE.s.obj:
 #############################################
 # Link the executable stm32-task3.elf
 
-build stm32-task3.elf: C_EXECUTABLE_LINKER__stm32-task3_Debug CMakeFiles/stm32-task3.dir/ADC/ADC.c.obj CMakeFiles/stm32-task3.dir/Delay/Delay.c.obj CMakeFiles/stm32-task3.dir/EXTI/EXTI.c.obj CMakeFiles/stm32-task3.dir/GPIO/GPIO.c.obj CMakeFiles/stm32-task3.dir/KEYPAD/Keypad.c.obj CMakeFiles/stm32-task3.dir/LCD/LCD.c.obj CMakeFiles/stm32-task3.dir/PWM/PWM.c.obj CMakeFiles/stm32-task3.dir/Rcc/Rcc.c.obj CMakeFiles/stm32-task3.dir/SevenSegment/SevenSegments.c.obj CMakeFiles/stm32-task3.dir/Speed.c.obj CMakeFiles/stm32-task3.dir/SpeedMeasurement/Speed.c.obj CMakeFiles/stm32-task3.dir/src/main.c.obj CMakeFiles/stm32-task3.dir/STM32-base-STM32Cube/CMSIS/STM32F4xx/src/system_stm32f4xx.c.obj CMakeFiles/stm32-task3.dir/STM32-base/startup/STM32F4xx/STM32F401xE.s.obj
+build stm32-task3.elf: C_EXECUTABLE_LINKER__stm32-task3_Debug CMakeFiles/stm32-task3.dir/ADC/ADC.c.obj CMakeFiles/stm32-task3.dir/Delay/Delay.c.obj CMakeFiles/stm32-task3.dir/EXTI/EXTI.c.obj CMakeFiles/stm32-task3.dir/GPIO/GPIO.c.obj CMakeFiles/stm32-task3.dir/KEYPAD/Keypad.c.obj CMakeFiles/stm32-task3.dir/LCD/LCD.c.obj CMakeFiles/stm32-task3.dir/PWM/PWM.c.obj CMakeFiles/stm32-task3.dir/Rcc/Rcc.c.obj CMakeFiles/stm32-task3.dir/SevenSegment/SevenSegments.c.obj CMakeFiles/stm32-task3.dir/SpeedMeasurement/Speed.c.obj CMakeFiles/stm32-task3.dir/src/main.c.obj CMakeFiles/stm32-task3.dir/STM32-base-STM32Cube/CMSIS/STM32F4xx/src/system_stm32f4xx.c.obj CMakeFiles/stm32-task3.dir/STM32-base/startup/STM32F4xx/STM32F401xE.s.obj
   FLAGS = -g
   LINK_FLAGS = -mthumb -mcpu=cortex-m4 -mfloat-abi=soft -O0 -Wall -Wextra -g -gdwarf-2 "-LD:/SBME/3rd Year/Embedded/Project/Smart-Conveyor-Monitoring/STM32-base/linker/" "-TD:/SBME/3rd Year/Embedded/Project/Smart-Conveyor-Monitoring/STM32-base/linker//STM32F4xx/STM32F401xE.ld" -Xlinker --gc-sections -Wl,-Map=stm32-task3.map --specs=nano.specs
   OBJECT_DIR = CMakeFiles\stm32-task3.dir
