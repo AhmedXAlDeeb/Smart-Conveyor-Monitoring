@@ -1,0 +1,15 @@
+//
+// Created by Mohamed Yasser on 6/6/2025.
+//
+
+#ifndef SPEED_H
+#define SPEED_H
+
+#include "Std_Types.h"
+
+void SpeedMeasurement_Init(void);
+uint8 SpeedMeasurement_GetPeriod(uint32* period);
+float SpeedMeasurement_GetFrequency(uint32 timerClockFreq);
+
+#endif // SPEED_H
+

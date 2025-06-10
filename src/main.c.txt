@@ -1,0 +1,109 @@
+#include "../RCC/Rcc.h"
+#include "../GPIO/GPIO.h"
+#include "../LCD/LCD.h"
+#include "../ADC/ADC_interface.h"
+#include "../ADC/ADC_private.h"
+#include "../SpeedMeasurement/Speed.h"
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int main(void) {
+    // 1. Enable the GPIOA clock (assuming LCD is connected to GPIOA)
+    RCC_AHB1ENR |= (1 << 0);  // Enable clock for GPIOA
+    RCC_AHB1ENR |= (1 << 1);  // Enable clock for GPIOA
+    RCC_AHB1ENR |= (1 << 2);  // Enable clock for GPIOA
+    Rcc_Enable(RCC_GPIOA);
+    Rcc_Enable(RCC_GPIOB);
+    Rcc_Enable(RCC_ADC1);
+    Rcc_Enable(RCC_TIM2);     // For timer capture
+
+    // initialize ADC channel 1
+    ADC_Init(GPIOA, 1);
+
+    uint32 object_count = 5;       // Example value
+    uint8 emergency_flag = 0;      // 0: normal, 1: emergency
+    // 2. Initialize the LCD
+    LCD_Init();
+
+    // Initialize Speed Measurement (TIM2_CH1 - PA0)
+    SpeedMeasurement_Init();
+
+    // 3. Send a message to the LCD
+
+    // // 4. Optionally move to second line and print more
+    // LCD_SendCommand(0xC0);  // Move to line 2 (0x80 + 0x40)
+    // LCD_SendString("LCD Driver!");
+
+    char line1[17] = {0};
+    char line2[17] = {0};
+
+    char motor_str[8];
+    char conv_str[8];
+    char obj_str[6];
+/*
+    //itoa(motor_speed, motor_str, 10);
+    //itoa(conveyor_speed, conv_str, 10);
+    itoa(object_count, obj_str, 10);
+
+    // line1 = "M:<motor>% C:<conveyor>"
+    strcpy(line1, "M:");
+    strcat(line1, motor_str);
+    strcat(line1, "% C:");
+    strcat(line1, conv_str);
+
+    // line2 = "Obj:<object_count>"
+    strcpy(line2, "Obj:");
+    strcat(line2, obj_str);
+
+    LCD_SendCommand(0x01);       // Clear display
+    LCD_SendString(line1);       // First line
+    LCD_SendCommand(0xC0);       // Move to second line
+    LCD_SendString(line2);
+*/
+    //LCD_SendString("Hello, LCD!");
+    const uint32 timerClockFreq = 64000;  // 1 MHz
+    const float pulsesPerRev = 20.0f;
+    const float wheelDiameter_cm = 6.0f;
+    const float wheelCircum_cm = 3.1416f * wheelDiameter_cm;
+
+    while (1) {
+    	uint16 pot_value = ADC_Conversion();
+        uint32 motor_speed = (pot_value * 100) / 4095 ;
+
+        // 4. Read conveyor speed from input capture
+        uint32 period = 0;
+
+
+        if (SpeedMeasurement_GetPeriod(&period)) {
+            float freq = SpeedMeasurement_GetFrequency(timerClockFreq);
+            float rpm = (freq * 60.0f) / pulsesPerRev;
+            float speed_cm_min = rpm * wheelCircum_cm;
+
+            // Convert to integer to display (or add precision)
+            uint16 conveyor_speed = (uint16)speed_cm_min;
+            //uint16 conveyor_speed = (uint16)freq;
+            itoa(motor_speed, motor_str, 10);
+            itoa(conveyor_speed, conv_str, 10);
+            itoa(object_count, obj_str, 10);
+
+            strcpy(line1, "M:");
+            strcat(line1, motor_str);
+            strcat(line1, "% C:");
+            strcat(line1, conv_str);
+
+            strcpy(line2, "Obj:");
+            strcat(line2, obj_str);
+
+            // Display on LCD
+            LCD_UpdateLine(0, line1);   // Row 0 (first line)
+            LCD_UpdateLine(1, line2);   // Row 1 (second line)
+        }
+
+        // 8. Optional delay (basic debouncing / update rate)
+        for (volatile int i = 0; i < 100000; i++); // ~simple delay
+    }
+
+    return 0;
+}
